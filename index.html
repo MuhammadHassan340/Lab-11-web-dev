@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 11 — Canvas & SVG</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    canvas {
+      border: 2px solid #333;
+      display: block;
+      margin: 10px auto;
+      cursor: crosshair;
+    }
+    .buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 8px 15px;
+      margin: 0 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    svg {
+      display: block;
+      margin: 20px auto;
+      border: 1px solid #333;
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Canvas Drawing App</h1>
+
+<div class="buttons">
+  <button id="clear">Clear Canvas</button>
+  <button id="save">Save as Image</button>
+</div>
+
+<canvas id="drawingCanvas" width="500" height="400"></canvas>
+
+<h2>SVG Animation Example</h2>
+
+<svg id="svgAnim" width="500" height="100">
+  <circle cx="50" cy="50" r="20" fill="tomato"></circle>
+</svg>
+
+<script>
+  // --------------------------
+  // Canvas Drawing App
+  // --------------------------
+  const canvas = document.getElementById('drawingCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+
+  canvas.addEventListener('mousedown', () => drawing = true);
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('mouseout', () => drawing = false);
+
+  canvas.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    ctx.fillStyle = 'blue';
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Clear button
+  document.getElementById('clear').addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  // Save as image button
+  document.getElementById('save').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'drawing.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+
+  // --------------------------
+  // SVG Animation
+  // --------------------------
+  const svg = document.getElementById('svgAnim');
+  const circle = svg.querySelector('circle');
+  let posX = 50;
+  let direction = 1;
+
+  const animate = () => {
+    posX += direction * 2;
+    if (posX > 450 || posX < 50) direction *= -1; // bounce
+    circle.setAttribute('cx', posX);
+    requestAnimationFrame(animate);
+  };
+
+  animate();
+</script>
+
+</body>
+</html>
